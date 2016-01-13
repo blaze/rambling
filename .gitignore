@@ -16,3 +16,7 @@ project/plugins/project/
 .scala_dependencies
 .worksheet
 *.iml
+
+#python
+__pycache__/
+*.pyc
