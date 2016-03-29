@@ -5,8 +5,10 @@ import io.continuum.knit.Utils._
 import io.continuum.knit.ClientArguments.parseArgs
 
 import java.net._
+import java.io.IOException
 import java.util.Collections
 import java.io.DataOutputStream
+import java.nio.ByteBuffer
 
 import scala.collection.JavaConverters._
 import scala.collection.mutable.{ArrayBuffer, HashMap}
@@ -17,6 +19,7 @@ import org.apache.hadoop.fs.Path
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.FileSystem
 import org.apache.hadoop.io
+import org.apache.hadoop.io.DataOutputBuffer
 import org.apache.hadoop.security.{Credentials, UserGroupInformation}
 import org.apache.hadoop.yarn.api.ApplicationConstants
 import org.apache.hadoop.yarn.api.records.{ContainerLaunchContext, _}
@@ -165,6 +168,30 @@ object Client extends Logging{
     appContext.setAMContainerSpec(amContainer)
     appContext.setResource(resource)
     appContext.setQueue(queue)
+
+    // Setup security tokens
+    if (UserGroupInformation.isSecurityEnabled()) {
+      // Note: Credentials class is marked as LimitedPrivate for HDFS and MapReduce
+      val credentials = new Credentials
+      val tokenRenewer = conf.get(YarnConfiguration.RM_PRINCIPAL)
+      if (tokenRenewer == null || tokenRenewer.length() == 0) {
+        throw new IOException(
+          "Can't get Master Kerberos principal for the RM to use as renewer")
+      }
+
+      // For now, only getting tokens for the default file-system.
+      val tokens = fs.addDelegationTokens(tokenRenewer, credentials);
+      println(tokens)
+      for (token <- tokens) {
+        val uri = fs.getUri()
+        println(s"Got dt for $uri $token")
+      }
+
+      val dob = new DataOutputBuffer
+      credentials.writeTokenStorageToStream(dob);
+      val fsTokens = ByteBuffer.wrap(dob.getData(), 0, dob.getLength());
+      amContainer.setTokens(fsTokens);
+    }
 
     //submit the application
     appId = appContext.getApplicationId
