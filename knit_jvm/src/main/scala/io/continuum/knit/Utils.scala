@@ -12,6 +12,7 @@ import org.apache.hadoop.yarn.api.records.{LocalResourceVisibility, LocalResourc
 import org.apache.hadoop.yarn.conf.YarnConfiguration
 import org.apache.hadoop.yarn.util.{Apps, ConverterUtils}
 import scala.collection.JavaConverters._
+import org.apache.log4j.Logger
 
 object Utils {
 
@@ -53,7 +54,7 @@ object Utils {
 
     val jarDepPath = Seq(sys.env("KNIT_HOME")).mkString(File.separator)
     val KNIT_JAR = new File(jarDepPath, "knit-1.0-SNAPSHOT.jar").getAbsolutePath()
-    println(s"Attemping upload of $KNIT_JAR")
+    logger.info(s"Attempting upload of $KNIT_JAR")
 
     // upload all files to stagingDir
     List(KNIT_JAR).foreach {
@@ -69,7 +70,7 @@ object Utils {
     val stagingDirPath = new Path(fs.getHomeDirectory(), stagingDir)
 
     val FILE_PATH = new File(filePath).getAbsolutePath()
-    println(s"Attemping upload of $FILE_PATH")
+    logger.info(s"Attemping upload of $FILE_PATH")
 
     // upload all files to stagingDir
     List(FILE_PATH).foreach {
@@ -91,12 +92,12 @@ object Utils {
     var destPath = srcPath
     if (!compareFs(srcFs, destFs)) {
       destPath = new Path(destDir, srcPath.getName())
-      print(s"Uploading resource $srcPath -> $destPath")
+      logger.info(s"Uploading resource $srcPath -> $destPath")
       FileUtil.copy(srcFs, srcPath, destFs, destPath, false, conf)
       destFs.setReplication(destPath, replication)
       destFs.setPermission(destPath, new FsPermission(APP_FILE_PERMISSION))
     } else {
-      println(s"Source and destination file systems are the same. Not copying $srcPath")
+      logger.info(s"Source and destination file systems are the same. Not copying $srcPath")
     }
   }
   /*

@@ -58,7 +58,7 @@ object Client extends Logging{
     }
     
     val parsedArgs = parseArgs(args)
-    println(parsedArgs)
+    logger.info(parsedArgs)
     
     // Communicate the bound port back to the caller via the caller-specified callback port
     val callbackHost = parsedArgs.callbackHost
@@ -90,7 +90,7 @@ object Client extends Logging{
     val stagingDirPath = new Path(fs.getHomeDirectory(), stagingDir)
     val KNIT_JAR = new Path(stagingDirPath, "knit-1.0-SNAPSHOT.jar")
     val KNIT_JAR_PATH = KNIT_JAR.makeQualified(fs.getUri, fs.getWorkingDirectory)
-    println(KNIT_JAR_PATH)
+    logger.debug(KNIT_JAR_PATH)
 
     // start a yarn client
     client = YarnClient.createYarnClient()
@@ -181,10 +181,10 @@ object Client extends Logging{
 
       // For now, only getting tokens for the default file-system.
       val tokens = fs.addDelegationTokens(tokenRenewer, credentials);
-      println(tokens)
+      logger.info(tokens)
       for (token <- tokens) {
         val uri = fs.getUri()
-        println(s"Got dt for $uri $token")
+        logger.info(s"Got dt for $uri $token")
       }
 
       val dob = new DataOutputBuffer
