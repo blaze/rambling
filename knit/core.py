@@ -130,11 +130,15 @@ class Knit(object):
 
         if self.rm != conf['host']:
             msg = "Possible Resource Manager hostname mismatch.  Detected {0}".format(conf['host'])
-            raise HDFSConfigException(msg)
+            print(msg)
+            conf['host'] = self.rm
+            #raise HDFSConfigException(msg)
 
         if str(self.rm_port) != str(conf['port']):
             msg = "Possible Resource Manager port mismatch.  Detected {0}".format(conf['port'])
-            raise HDFSConfigException(msg)
+            print(msg)
+            conf['port'] = self.rm_port
+            #raise HDFSConfigException(msg)
 
         return conf
 
@@ -170,11 +174,15 @@ class Knit(object):
 
         if self.nn != conf['host']:
             msg = "Possible Namenode hostname mismatch.  Detected {0}".format(conf['host'])
-            raise HDFSConfigException(msg)
+            print(msg)
+            conf['host'] = self.nn
+            #raise HDFSConfigException(msg)
 
         if str(self.nn_port) != str(conf['port']):
             msg = "Possible Namenode port mismatch.  Detected {0}".format(conf['port'])
-            raise HDFSConfigException(msg)
+            print(msg)
+            conf['port'] = self.nn_port
+            #raise HDFSConfigException(msg)
 
         return conf
 
