@@ -121,7 +121,12 @@ object ApplicationMaster extends Logging with AMRMClientAsync.CallbackHandler wi
       numRequested += 1
     }
   }
-    
+
+//  def removeContainers(): Unit = {
+//    rmClient.releaseAssignedContainer()
+//    rmClient.getAvailableResources
+//  }
+
   override def onContainersAllocated(containers: java.util.List[Container]) = {
     val stagingDir = ".knitDeps"
     val user = sys.env.get("KNIT_USER")

@@ -402,7 +402,7 @@ class Knit(object):
         try:
             return self.client.kill()
         except Py4JError:
-            logger.warn("Error while attempting to kill", exc_info=1)
+            logger.debug("Error while attempting to kill", exc_info=1)
 
         # fallback
         return self.yarn_api.kill(self.app_id)
@@ -432,7 +432,7 @@ class Knit(object):
                 return "SUCCEEDED"
             return status
         except Py4JError:
-            logger.warn("Error while fetching status", exc_info=1)
+            logger.debug("Error while fetching status", exc_info=1)
 
         # fallback
         status = self.status(self.app_id)
