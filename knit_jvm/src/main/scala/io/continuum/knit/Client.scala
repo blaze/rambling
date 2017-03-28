@@ -178,7 +178,24 @@ object Client extends Logging{
     val appReport = client.getApplicationReport(appId)
     appReport.getHost
   }
-  
+
+  def getContainers(): String = {
+    val attempts = client.getApplicationAttempts(appId).asScala
+    val attempt = attempts.last
+
+    logger.info(s"Getting containers for $attempt")
+    val containers = client.getContainers(attempt.getApplicationAttemptId).asScala
+    var list_ = List[String]()
+
+    for (container <- containers) {
+      list_ ::= container.getContainerId.toString
+    }
+
+    val container_list = list_.mkString(",")
+    logger.info(s"Container ID: $container_list")
+    container_list
+  }
+
   def masterRPCPort(): Int = {
     val appReport = client.getApplicationReport(appId)
     appReport.getRpcPort

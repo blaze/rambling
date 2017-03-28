@@ -97,7 +97,7 @@ object ApplicationMaster extends Logging with AMRMClientAsync.CallbackHandler wi
     logger.info(s"$nrRunningContainers containers still running, requesting $nrContainersToRequest")
     addContainers(nrContainersToRequest, vCores, mem)
   }
-    
+
   def addContainers(numContainers: Int, vCores: Int, mem: Int) {
     logger.info(s"Add $numContainers containers")
 
@@ -122,10 +122,11 @@ object ApplicationMaster extends Logging with AMRMClientAsync.CallbackHandler wi
     }
   }
 
-//  def removeContainers(): Unit = {
-//    rmClient.releaseAssignedContainer()
-//    rmClient.getAvailableResources
-//  }
+  def removeContainer(_containerId: String) {
+    logger.info("Releasing Container: $_containerId")
+    val containerId = ContainerId.fromString(_containerId)
+    rmClient.releaseAssignedContainer(containerId)
+  }
 
   override def onContainersAllocated(containers: java.util.List[Container]) = {
     val stagingDir = ".knitDeps"
