@@ -93,7 +93,8 @@ class Knit(object):
         # must set KNIT_HOME ENV for YARN App
         os.environ['KNIT_HOME'] = self.KNIT_HOME
         os.environ['REPLICATION_FACTOR'] = str(self.replication_factor)
-        
+        os.environ['REPLICATION_FACTOR'] = str(self.replication_factor)
+
         self.client = None
         self.master = None
         self.app_id = None

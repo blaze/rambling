@@ -52,7 +52,7 @@ object Utils {
     FileSystem.mkdirs(fs, stagingDirPath, new FsPermission(STAGING_DIR_PERMISSION))
 
     val replicationFactor = sys.env("REPLICATION_FACTOR").toShort
-    println(s"Setting Replication Factor to upload of $replicationFactor")
+    println(s"Setting Replication Factor to: $replicationFactor")
 
     val jarDepPath = Seq(sys.env("KNIT_HOME")).mkString(File.separator)
     val KNIT_JAR = new File(jarDepPath, "knit-1.0-SNAPSHOT.jar").getAbsolutePath()
