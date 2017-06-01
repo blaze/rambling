@@ -51,7 +51,7 @@ object Utils {
       FsPermission.createImmutable(Integer.parseInt("777", 8).toShort)
     FileSystem.mkdirs(fs, stagingDirPath, new FsPermission(STAGING_DIR_PERMISSION))
 
-    val replicationFactor = sys.env("REPLICATION_FACTOR").toInt
+    val replicationFactor = sys.env("REPLICATION_FACTOR").toShort
     println(s"Setting Replication Factor to upload of $replicationFactor")
 
     val jarDepPath = Seq(sys.env("KNIT_HOME")).mkString(File.separator)
@@ -70,6 +70,7 @@ object Utils {
     val fs = FileSystem.get(conf)
     val stagingDir = ".knitDeps"
     val stagingDirPath = new Path(fs.getHomeDirectory(), stagingDir)
+    val replicationFactor = sys.env("REPLICATION_FACTOR").toShort
 
     val FILE_PATH = new File(filePath).getAbsolutePath()
     println(s"Attemping upload of $FILE_PATH")
