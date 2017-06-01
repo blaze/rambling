@@ -51,6 +51,9 @@ object Utils {
       FsPermission.createImmutable(Integer.parseInt("777", 8).toShort)
     FileSystem.mkdirs(fs, stagingDirPath, new FsPermission(STAGING_DIR_PERMISSION))
 
+    val replicationFactor = sys.env("REPLICATION_FACTOR").toInt
+    println(s"Setting Replication Factor to upload of $replicationFactor")
+
     val jarDepPath = Seq(sys.env("KNIT_HOME")).mkString(File.separator)
     val KNIT_JAR = new File(jarDepPath, "knit-1.0-SNAPSHOT.jar").getAbsolutePath()
     println(s"Attemping upload of $KNIT_JAR")
@@ -59,7 +62,7 @@ object Utils {
     List(KNIT_JAR).foreach {
       case (file) =>
         val p = getQualifiedLocalPath(Utils.resolveURI(file))
-        copyFileToRemote(stagingDirPath, p, 1)
+        copyFileToRemote(stagingDirPath, p, replicationFactor)
     }
   }
 
@@ -75,7 +78,7 @@ object Utils {
     List(FILE_PATH).foreach {
       case (file) =>
         val p = getQualifiedLocalPath(Utils.resolveURI(file))
-        copyFileToRemote(stagingDirPath, p, 1)
+        copyFileToRemote(stagingDirPath, p, replicationFactor)
     }
   }
 
