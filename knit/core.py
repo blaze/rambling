@@ -249,7 +249,8 @@ class Knit(object):
             A yarn application ID string
         """
         files = files or []
-        envvars = envvars or {'KNIT_LANG': self.lang}
+        envvars = {} or envvars.copy()
+        envvars.setdefault('KNIT_LANG', self.lang)
         for k, v in envvars.items():
             if not isinstance(k, str) or not isinstance(v, str):
                 raise ValueError('Environment must contain only strings (%s)'
