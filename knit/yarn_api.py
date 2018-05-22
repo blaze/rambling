@@ -19,6 +19,21 @@ from .exceptions import YARNException
 logger = logging.getLogger(__name__)
 
 
+# See org.apache.hadoop.yarn.api.records.ContainerId.toString
+# for the full spec. Examples:
+#
+#     container_1452274436693_0001_01_000001
+#     container_e16815_1526868718404_98303_01_000002
+_re_container_id = re.compile(
+    "container"
+    r"(_e(?P<epoch>\d+))?"  # Optional if 0.
+    r"_(?P<timestamp>\d+)"
+    r"_(?P<app_id>\d+)"
+    r"_(?P<attempt_id>\d+)"
+    r"_(?P<container_id>\d+)"
+)
+
+
 class YARNAPI(object):
     """REST interface to YARN
 
@@ -127,13 +142,14 @@ class YARNAPI(object):
         container = data['container']
         logger.debug(container)
 
-        # container_1452274436693_0001_01_000001
-        def get_app_id_num(x):
-            return "_".join(x.split("_")[1:3])
+        def container_id_to_app_id(container_id):
+            m = _re_container_id.match(container_id)
+            return "application_{0}_{1}".format(
+                m.group("timestamp"),
+                m.group("app_id"))
 
-        app_id_num = get_app_id_num(app_id)
         containers = [d for d in container
-                      if get_app_id_num(d['id']) == app_id_num]
+                      if container_id_to_app_id(d['id']) == app_id]
         return containers
 
     def logs(self, app_id, shell=False, retries=4, delay=3):
